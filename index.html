@@ -19,18 +19,25 @@
   <main class="main">
     <!-- 吉祥物 -->
     <div class="mascot">
-      <img src="https://via.placeholder.com/120" alt="mascot">
+      <img src="Picture\羽绒服.png" alt="mascot">
     </div>
 
     <!-- 文案 -->
     <p class="greeting">hi，又去哪里玩了呀？</p>
 
     <!-- 滑动卡片 -->
-    <div class="card-container">
-      <div class="card new-card">
-        <span class="plus">＋</span>
-        <span>新建</span>
+    <div class="card-slider">
+      <!-- 左侧滑动提示 -->
+      <div class="swipe-hint left">
+        <span class="hint-text">左右滑动</span>
+        <span class="hint-arrow"><<<</span>
       </div>
+      
+      <div class="card-container">
+        <div class="card new-card">
+          <span class="plus">＋</span>
+          <span>新建</span>
+        </div>
 
       <div class="card">
         <p>上次的旅行</p>
@@ -39,7 +46,183 @@
       <div class="card">
         <p>周末随拍</p>
       </div>
+      
+      <div class="card">
+        <p>毕业纪念</p>
+      </div>
+      
+      <div class="card">
+        <p>美食记录</p>
+      </div>
+      
+      <div class="card">
+        <p>城市风光</p>
+      </div>
+      
+      <div class="card">
+        <p>自然风景</p>
+      </div>
+      
+      <div class="card">
+        <p>家庭聚会</p>
+      </div>
+      </div>
+      
+      <!-- 右侧滑动提示 -->
+      <div class="swipe-hint right">
+        <span class="hint-text">左右滑动</span>
+        <span class="hint-arrow">>>></span>
+      </div>
     </div>
   </main>
+
+  <script>
+    // 卡片滑动功能
+    const cardContainer = document.querySelector('.card-container');
+    const cards = Array.from(document.querySelectorAll('.card'));
+    let currentIndex = 0;
+    let startX = 0;
+    let currentX = 0;
+    const threshold = 60; // 减小阈值，使滑动更轻松
+    const maxRotation = 10; // 最大倾斜角度
+
+    // 触摸开始
+    cardContainer.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      // 清除过渡效果，使拖动更流畅
+      if (cards[currentIndex]) {
+        cards[currentIndex].style.transition = 'none';
+      }
+    });
+
+    // 触摸移动
+    cardContainer.addEventListener('touchmove', (e) => {
+      currentX = e.touches[0].clientX;
+      const diffX = currentX - startX;
+      
+      // 计算旋转角度
+      const rotation = (diffX / 10);
+      const clampedRotation = Math.max(-maxRotation, Math.min(maxRotation, rotation));
+      
+      // 只移动最上面的卡片
+      if (cards[currentIndex]) {
+        cards[currentIndex].style.transform = `translateX(${diffX}px) rotate(${clampedRotation}deg) scale(1)`;
+      }
+    });
+
+    // 触摸结束
+    cardContainer.addEventListener('touchend', () => {
+      const diffX = currentX - startX;
+
+      // 无论左右滑动，只要超过阈值就切换到下一张
+      if (Math.abs(diffX) > threshold) {
+        // 根据滑动方向设置旋转角度
+        const rotation = diffX > 0 ? 15 : -15;
+        const translateX = diffX > 0 ? 200 : -200;
+        handleSwipe(translateX, rotation);
+      }
+      // 没有滑动足够距离，重置位置
+      else {
+        resetCardPosition();
+      }
+    });
+
+    // 统一滑动处理函数
+    function handleSwipe(translateX, rotation) {
+      if (!cards[currentIndex]) return;
+      
+      // 当前卡片移出并弹到后面
+      cards[currentIndex].style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      cards[currentIndex].style.transform = `translateX(${translateX}px) rotate(${rotation}deg) scale(0.85)`;
+      cards[currentIndex].style.opacity = '0';
+      
+      // 更新索引（循环）
+      currentIndex = (currentIndex + 1) % cards.length;
+      
+      // 重新排列卡片
+      setTimeout(() => {
+        rearrangeCards();
+      }, 200);
+    }
+
+    // 重置卡片位置
+    function resetCardPosition() {
+      if (!cards[currentIndex]) return;
+      
+      cards[currentIndex].style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+      cards[currentIndex].style.transform = `translateX(0) rotate(0deg) scale(1)`;
+      cards[currentIndex].style.opacity = '1';
+    }
+
+    // 重新排列卡片
+    function rearrangeCards() {
+      cards.forEach((card, index) => {
+        card.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        
+        // 计算相对于当前索引的位置（循环处理）
+        const relativeIndex = (index - currentIndex + cards.length) % cards.length;
+        
+        if (relativeIndex === 0) {
+          // 当前卡片在中间，z-index最高
+          card.style.zIndex = '3';
+          card.style.transform = 'translateX(0) translateY(0) rotate(0deg) scale(1)';
+          card.style.opacity = '1';
+        } else if (relativeIndex === 1) {
+          // 下一张在左侧
+          card.style.zIndex = '2';
+          card.style.transform = 'translateX(-15px) translateY(5px) rotate(-2deg) scale(0.98)';
+          card.style.opacity = '0.9';
+        } else if (relativeIndex === 2) {
+          // 再下一张在右侧
+          card.style.zIndex = '2';
+          card.style.transform = 'translateX(15px) translateY(5px) rotate(2deg) scale(0.98)';
+          card.style.opacity = '0.9';
+        } else {
+          // 其他所有卡片都隐藏
+          card.style.zIndex = '0';
+          card.style.transform = 'translateX(0) translateY(30px) rotate(0deg) scale(0.95)';
+          card.style.opacity = '0';
+        }
+      });
+    }
+
+    // 鼠标事件支持（用于桌面测试）
+    cardContainer.addEventListener('mousedown', (e) => {
+      startX = e.clientX;
+      // 清除过渡效果
+      if (cards[currentIndex]) {
+        cards[currentIndex].style.transition = 'none';
+      }
+      cardContainer.addEventListener('mousemove', mouseMoveHandler);
+      cardContainer.addEventListener('mouseup', mouseUpHandler);
+    });
+
+    function mouseMoveHandler(e) {
+      currentX = e.clientX;
+      const diffX = currentX - startX;
+      const rotation = (diffX / 10);
+      const clampedRotation = Math.max(-maxRotation, Math.min(maxRotation, rotation));
+      
+      if (cards[currentIndex]) {
+        cards[currentIndex].style.transform = `translateX(${diffX}px) rotate(${clampedRotation}deg) scale(1)`;
+      }
+    }
+
+    function mouseUpHandler(e) {
+      const diffX = currentX - startX;
+
+      // 无论左右滑动，只要超过阈值就切换到下一张
+      if (Math.abs(diffX) > threshold) {
+        const rotation = diffX > 0 ? 15 : -15;
+        const translateX = diffX > 0 ? 200 : -200;
+        handleSwipe(translateX, rotation);
+      } else {
+        resetCardPosition();
+      }
+
+      cardContainer.removeEventListener('mousemove', mouseMoveHandler);
+      cardContainer.removeEventListener('mouseup', mouseUpHandler);
+    }
+  </script>
 </body>
 </html>

@@ -53,7 +53,7 @@ body {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: #e6f4ef;
+  /* background: #e6f4ef; */
 }
 
 /* 文案 */
@@ -63,31 +63,194 @@ body {
   color: #333;
 }
 
-/* 卡片容器 */
-.card-container {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  margin-top: 40px;
-  padding-bottom: 10px;
-}
-
-.card-container::-webkit-scrollbar {
-  display: none;
-}
-
-/* 卡片 */
-.card {
-  min-width: 140px;
-  height: 160px;
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+/* 卡片滑块容器 */
+.card-slider {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 40px auto 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+}
+
+/* 卡片容器 - 调整以适应新的卡片尺寸 */
+.card-container {
+  position: relative;
+  width: 350px;
+  height: 350px;
+  overflow: visible;
+}
+
+/* 滑动提示 - 增强可见性 */
+.swipe-hint {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 10px;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.swipe-hint:hover {
+  opacity: 0.9;
+}
+
+.swipe-hint.left {
+  left: 0;
+}
+
+.swipe-hint.right {
+  right: 0;
+}
+
+/* 提示文字 - 增强可见性 */
+.hint-text {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 3px;
+  white-space: nowrap;
+}
+
+/* 提示箭头 - 增强可见性 */
+.hint-arrow {
+  font-size: 18px;
+  font-weight: bold;
+  color: #999;
+  animation: pulse 2s infinite;
+}
+
+/* 动态渐变效果 */
+@keyframes pulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+}
+
+/* 左侧箭头动画 */
+.swipe-hint.left .hint-arrow {
+  animation-delay: 0.2s;
+}
+
+/* 右侧箭头动画 */
+.swipe-hint.right .hint-arrow {
+  animation-delay: 0.4s;
+}
+
+/* 卡片 - 更窄更长的形状 */
+.card {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 200px;
+  height: 280px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
   color: #555;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center bottom;
+  margin-left: -100px; /* 居中 */
+}
+
+/* 扇形展开效果 */
+.card:nth-child(1) {
+  z-index: 3;
+  transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+  opacity: 1;
+}
+
+.card:nth-child(2) {
+  z-index: 2;
+  transform: translateX(-8px) translateY(3px) rotate(-2deg) scale(0.98);
+  opacity: 0.9;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.card:nth-child(3) {
+  z-index: 2;
+  transform: translateX(8px) translateY(3px) rotate(2deg) scale(0.98);
+  opacity: 0.9;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+/* 默认隐藏多余卡片 */
+.card:nth-child(n+4) {
+  z-index: 0;
+  transform: translateX(0) translateY(20px) rotate(0deg) scale(0.95);
+  opacity: 0;
+}
+
+/* 滑动提示样式 - 增强可见性 */
+.swipe-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  margin: 0 10px;
+  transition: opacity 0.3s ease;
+}
+
+.swipe-hint:hover {
+  opacity: 0.9;
+}
+
+.hint-text {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 3px;
+}
+
+.hint-arrow {
+  font-size: 18px;
+  font-weight: bold;
+  color: #999;
+  animation: swipe-pulse 2s infinite;
+}
+
+/* 左侧提示 */
+.swipe-hint.left .hint-arrow {
+  animation-delay: 0s;
+}
+
+/* 右侧提示 */
+.swipe-hint.right .hint-arrow {
+  animation-delay: 0.3s;
+}
+
+/* 动态渐变动画 */
+@keyframes swipe-pulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
 }
 
 /* 新建卡片 */
