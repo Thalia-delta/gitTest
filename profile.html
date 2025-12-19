@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>我的</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* 我的页面特定样式 */
+    .profile-container {
+      max-width: 600px;
+      margin: 80px auto 40px;
+      padding: 0 20px;
+    }
+    
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    /* 用户信息卡片 */
+    .user-info {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      padding: 25px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 32px;
+    }
+    
+    .user-details h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    
+    .user-details p {
+      font-size: 14px;
+      color: #999;
+      margin: 0;
+    }
+    
+    /* 设置选项列表 */
+    .settings-list {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 25px;
+      border-bottom: 1px solid #f5f5f5;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    
+    .setting-item:last-child {
+      border-bottom: none;
+    }
+    
+    .setting-item:hover {
+      background-color: #fafafa;
+    }
+    
+    .setting-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .setting-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+      color: #666;
+    }
+    
+    .setting-text h3 {
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+      margin: 0 0 3px 0;
+    }
+    
+    .setting-text p {
+      font-size: 13px;
+      color: #999;
+      margin: 0;
+    }
+    
+    .setting-right {
+      color: #999;
+      font-size: 16px;
+    }
+    
+    /* 退出登录按钮 */
+    .logout-btn {
+      width: 100%;
+      background: #fff;
+      border: 1px solid #ff4d4f;
+      color: #ff4d4f;
+      border-radius: 16px;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 30px;
+      transition: all 0.3s ease;
+    }
+    
+    .logout-btn:hover {
+      background: #ff4d4f;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部导航 - 与主页面保持一致 -->
+  <header class="top-nav">
+    <div class="nav-toggle" id="navToggle">
+      <span class="toggle-icon">☰</span>
+    </div>
+    <div class="nav-dropdown" id="navDropdown">
+      <span class="nav-item" onclick="window.location.href='index.html'">主界面</span>
+      <span class="nav-item" onclick="window.location.href='album.html'">相册集</span>
+      <span class="nav-item active">我的</span>
+    </div>
+  </header>
+
+  <!-- 主体内容 -->
+  <main class="profile-container">
+    <h1 class="page-title">我的</h1>
+    
+    <!-- 用户信息卡片 -->
+    <div class="user-info">
+      <div class="avatar">👤</div>
+      <div class="user-details">
+        <h2>用户名</h2>
+        <p>个人资料完善度 80%</p>
+      </div>
+    </div>
+    
+    <!-- 设置选项列表 -->
+    <div class="settings-list">
+      <div class="setting-item">
+        <div class="setting-left">
+          <span class="setting-icon">📱</span>
+          <div class="setting-text">
+            <h3>账号设置</h3>
+            <p>个人信息、头像、昵称</p>
+          </div>
+        </div>
+        <div class="setting-right">›</div>
+      </div>
+      
+      <div class="setting-item">
+        <div class="setting-left">
+          <span class="setting-icon">🔒</span>
+          <div class="setting-text">
+            <h3>隐私设置</h3>
+            <p>权限、隐私保护</p>
+          </div>
+        </div>
+        <div class="setting-right">›</div>
+      </div>
+      
+      <div class="setting-item">
+        <div class="setting-left">
+          <span class="setting-icon">⚙️</span>
+          <div class="setting-text">
+            <h3>通用设置</h3>
+            <p>通知、语言、主题</p>
+          </div>
+        </div>
+        <div class="setting-right">›</div>
+      </div>
+      
+      <div class="setting-item">
+        <div class="setting-left">
+          <span class="setting-icon">💾</span>
+          <div class="setting-text">
+            <h3>存储管理</h3>
+            <p>相册容量、清理缓存</p>
+          </div>
+        </div>
+        <div class="setting-right">›</div>
+      </div>
+      
+      <div class="setting-item">
+        <div class="setting-left">
+          <span class="setting-icon">📖</span>
+          <div class="setting-text">
+            <h3>帮助与反馈</h3>
+            <p>使用指南、问题反馈</p>
+          </div>
+        </div>
+        <div class="setting-right">›</div>
+      </div>
+      
+      <div class="setting-item">
+        <div class="setting-left">
+          <span class="setting-icon">ℹ️</span>
+          <div class="setting-text">
+            <h3>关于我们</h3>
+            <p>版本信息、服务条款</p>
+          </div>
+        </div>
+        <div class="setting-right">›</div>
+      </div>
+    </div>
+    
+    <!-- 退出登录按钮 -->
+    <button class="logout-btn">退出登录</button>
+  </main>
+
+  <script>
+    // 导航菜单功能
+    const navToggle = document.getElementById('navToggle');
+    const navDropdown = document.getElementById('navDropdown');
+    let isDropdownOpen = false;
+    
+    // 切换下拉菜单显示状态
+    navToggle.addEventListener('click', () => {
+      isDropdownOpen = !isDropdownOpen;
+      navDropdown.classList.toggle('show', isDropdownOpen);
+    });
+    
+    // 点击页面其他地方关闭下拉菜单
+    document.addEventListener('click', (e) => {
+      if (!navToggle.contains(e.target) && !navDropdown.contains(e.target)) {
+        isDropdownOpen = false;
+        navDropdown.classList.remove('show');
+      }
+    });
+    
+    // 退出登录功能（示例）
+    document.querySelector('.logout-btn').addEventListener('click', () => {
+      if (confirm('确定要退出登录吗？')) {
+        alert('已退出登录');
+        // 这里可以添加实际的退出登录逻辑
+      }
+    });
+  </script>
+</body>
+</html>
