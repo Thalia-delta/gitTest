@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>极简响应式Web框架</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">Minimal</div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link">首页</a>
+                <a href="#about" class="nav-link">关于</a>
+                <a href="#services" class="nav-link">服务</a>
+                <a href="#contact" class="nav-link">联系</a>
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="container">
+            <h1 class="hero-title">极简设计，极致体验</h1>
+            <p class="hero-subtitle">自适应不同设备的现代Web框架</p>
+            <button class="btn btn-primary">开始探索</button>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="section-title">关于我们</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">🎨</div>
+                    <h3 class="card-title">极简设计</h3>
+                    <p class="card-text">采用简洁优雅的设计语言，专注于内容本身。</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📱</div>
+                    <h3 class="card-title">响应式布局</h3>
+                    <p class="card-text">完美适配各种屏幕尺寸，提供一致的用户体验。</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">✨</div>
+                    <h3 class="card-title">流畅动效</h3>
+                    <p class="card-text">精心设计的过渡动画，提升用户交互体验。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="section bg-light">
+        <div class="container">
+            <h2 class="section-title">我们的服务</h2>
+            <div class="service-list">
+                <div class="service-item">
+                    <h3>Web开发</h3>
+                    <p>定制化的网站开发服务，满足您的业务需求。</p>
+                </div>
+                <div class="service-item">
+                    <h3>UI/UX设计</h3>
+                    <p>专业的用户界面和用户体验设计，提升产品价值。</p>
+                </div>
+                <div class="service-item">
+                    <h3>移动适配</h3>
+                    <p>确保您的网站在移动设备上也能完美展示。</p>
+                </div>
+                <div class="service-item">
+                    <h3>性能优化</h3>
+                    <p>提升网站加载速度和运行性能，优化用户体验。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section">
+        <div class="container">
+            <h2 class="section-title">联系我们</h2>
+            <form class="contact-form">
+                <div class="form-group">
+                    <input type="text" placeholder="您的姓名" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="您的邮箱" required>
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="您的留言" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">发送留言</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 极简Web框架. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,545 @@
+/* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 根元素字体大小设置，用于响应式缩放 */
+:root {
+    font-size: 16px;
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --text-color: #333;
+    --text-light: #666;
+    --bg-color: #fff;
+    --bg-light: #f8f9fa;
+    --border-color: #e9ecef;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 响应式字体大小 */
+@media (max-width: 768px) {
+    :root {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        font-size: 12px;
+    }
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* 容器类 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* 导航栏 */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1000;
+    transition: var(--transition);
+}
+
+.navbar.scrolled {
+    box-shadow: var(--shadow);
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-link {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -0.25rem;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 0.375rem;
+    cursor: pointer;
+}
+
+.hamburger span {
+    width: 1.5rem;
+    height: 0.1875rem;
+    background-color: var(--text-color);
+    border-radius: 0.1875rem;
+    transition: var(--transition);
+}
+
+/* 英雄区域 */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 6rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="1000" height="1000" fill="url(%23grid)"/></svg>');
+    opacity: 0.5;
+}
+
+.hero .container {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+    animation: fadeInUp 1s ease-out;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2.5rem;
+    opacity: 0.9;
+    animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+/* 按钮样式 */
+.btn {
+    display: inline-block;
+    padding: 0.875rem 2rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background-color: var(--bg-color);
+    color: var(--primary-color);
+    animation: fadeInUp 1s ease-out 0.4s both;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.2), transparent);
+    transition: var(--transition);
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+/* 区块样式 */
+.section {
+    padding: 6rem 0;
+    transition: var(--transition);
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--text-color);
+    letter-spacing: -0.5px;
+}
+
+.bg-light {
+    background-color: var(--bg-light);
+}
+
+/* 卡片网格 */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.card {
+    background-color: var(--bg-color);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+}
+
+.card-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-color);
+}
+
+.card-text {
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+/* 服务列表 */
+.service-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.service-item {
+    padding: 2rem;
+    background-color: var(--bg-color);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.service-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+    border-color: var(--primary-color);
+}
+
+.service-item h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-color);
+}
+
+.service-item p {
+    color: var(--text-light);
+    font-size: 0.9375rem;
+}
+
+/* 联系表单 */
+.contact-form {
+    max-width: 600px;
+    margin: 3rem auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    position: relative;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: var(--transition);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--text-light);
+    opacity: 0.7;
+}
+
+/* 页脚 */
+.footer {
+    background-color: var(--bg-light);
+    padding: 3rem 0 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.footer .container {
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.9375rem;
+}
+
+/* 额外UI组件 */
+
+/* 进度条 */
+.progress-bar {
+    width: 100%;
+    height: 0.5rem;
+    background-color: var(--bg-light);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 0.25rem;
+    transition: width 0.5s ease;
+}
+
+/* 标签 */
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.tag {
+    padding: 0.375rem 0.75rem;
+    background-color: var(--bg-light);
+    color: var(--text-color);
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+}
+
+.tag:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* 徽章 */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-primary {
+    background-color: rgba(52, 152, 219, 0.1);
+    color: var(--primary-color);
+}
+
+.badge-success {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--secondary-color);
+}
+
+/* 分隔线 */
+.divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 2rem 0;
+}
+
+/* 列表 */
+.list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.list-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.list-item:hover {
+    padding-left: 0.5rem;
+    color: var(--primary-color);
+}
+
+/* 图片 */
+.img-responsive {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    transition: var(--transition);
+}
+
+.img-responsive:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow);
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 滚动动画 */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: var(--transition);
+}
+
+.scroll-reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .nav-links {
+        position: fixed;
+        top: 60px;
+        left: -100%;
+        flex-direction: column;
+        background-color: var(--bg-color);
+        width: 100%;
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+    }
+
+    .nav-links.active {
+        left: 0;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.125rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .card-grid {
+        gap: 1.5rem;
+    }
+
+    .card {
+        padding: 1.5rem;
+    }
+
+    .section {
+        padding: 4rem 0;
+    }
+}
