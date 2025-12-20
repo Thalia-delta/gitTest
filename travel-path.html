@@ -374,7 +374,7 @@
             display: block;
             width: 12px;
             height: 12px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='9' width='13' height='13' rx='2' ry='2'%3E%3C/rect%3E%3Cpath d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'%3E%3C/path%3E%3C/svg%3E");
+            background-image: url("Picture\草帽.png");
             background-size: contain;
             background-repeat: no-repeat;
         }
@@ -384,7 +384,7 @@
             display: block;
             width: 12px;
             height: 12px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234CAF50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+            background-image: url("Picture\草帽冰淇淋.png");
             background-size: contain;
             background-repeat: no-repeat;
         }
@@ -551,8 +551,19 @@
             
             // 计算缩放比例 - 增加一点缩放以获得更好的视觉效果
             const padding = 100;
-            const scaleX = (canvas.width - 2 * padding) / (maxX - minX);
-            const scaleY = (canvas.height - 2 * padding) / (maxY - minY);
+            let scaleX, scaleY;
+            
+            // 处理只有一个路径点的情况
+            if (pathPoints.length === 1) {
+                // 当只有一个点时，使用默认缩放比例
+                scaleX = 100; // 默认缩放比例
+                scaleY = 100; // 默认缩放比例
+            } else {
+                // 正常计算缩放比例
+                scaleX = (canvas.width - 2 * padding) / (maxX - minX);
+                scaleY = (canvas.height - 2 * padding) / (maxY - minY);
+            }
+            
             mapScale = Math.min(scaleX, scaleY) * 0.9; // 增加缩放比例
             
             // 计算偏移量
@@ -914,8 +925,15 @@
                 
                 const distance = Math.sqrt((x - targetX) ** 2 + (y - targetY) ** 2);
                 
+                // 处理单个路径点的特殊情况
+                if (pathPoints.length === 1) {
+                    // 如果只有一个路径点，直接显示照片组
+                    if (!photoGroups[currentPathIndex].classList.contains('visible')) {
+                        photoGroups[currentPathIndex].classList.add('visible');
+                    }
+                } 
                 // 第一个照片组需要特殊处理：只有当动画开始后且有一定进度时才显示
-                if (currentPathIndex === 0) {
+                else if (currentPathIndex === 0) {
                     // 只有当有动画进度（animationProgress > 0）且距离足够近时才显示
                     if (animationProgress > 0 && distance < 20 && !photoGroups[currentPathIndex].classList.contains('visible')) {
                         photoGroups[currentPathIndex].classList.add('visible');

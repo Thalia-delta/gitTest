@@ -96,18 +96,21 @@ def serve_static(path):
 #     return result
 
 
-# 真实的Coze多模态大模型分析函数
+# 真实的豆包多模态大模型分析函数
 def analyze_with_multimodal_model(photo_data):
-    # Coze API配置 - 需要用户填充的部分
-    COZE_API_KEY = "your_coze_api_key"  # 替换为您的Coze API密钥
-    COZE_API_ENDPOINT = "https://api.coze.cn/v3/chat/completions"  # Coze API端点
-    COZE_MODEL_NAME = "your_coze_model_name"  # 替换为您使用的Coze模型名称
+    # 豆包API配置 - 需要用户填充的部分
+    # DOUBAO_API_KEY = "your_doubao_api_key"  # 替换为您的豆包API密钥
+    # DOUBAO_API_ENDPOINT = "https://ark.cn-beijing.volces.com/api/v3/chat/completions"  # 豆包API端点
+    DOUBAO_API_KEY = "a38e9f8e-f58c-4e14-bfa1-10e8e2311af0"  # 替换为您的豆包API密钥
+    DOUBAO_API_ENDPOINT = "https://ark.cn-beijing.volces.com/api/v3/chat/completions"  # 豆包API端点
+    DOUBAO_MODEL_NAME = "doubao-seed-1-6-251015"  # 豆包模型名称，可根据需要选择其他模型
     
     try:
         # 准备API请求参数
         headers = {
-            "Authorization": f"Bearer {COZE_API_KEY}",
-            "Content-Type": "application/json"
+            "Authorization": f"Bearer {DOUBAO_API_KEY}",
+            "Content-Type": "application/json",
+            "Accept": "application/json"
         }
         
         # 提取照片的Base64数据（去除前缀）
@@ -115,10 +118,12 @@ def analyze_with_multimodal_model(photo_data):
         for photo in photo_data:
             # 提取Base64数据（去除data:image/xxx;base64,前缀）
             base64_data = photo['data'].split(',')[1] if ',' in photo['data'] else photo['data']
+            # 确定文件类型
+            file_type = photo['type'] if 'type' in photo else "image/jpeg"
             photos.append({
                 "name": photo['name'],
                 "data": base64_data,
-                "type": photo['type']
+                "type": file_type
             })
         
         # 构造消息内容
@@ -131,10 +136,10 @@ def analyze_with_multimodal_model(photo_data):
                            "3. 为每个地点生成三种描述：\n"
                            "   - 极简回忆：简洁的地点+活动描述\n"
                            "   - 故事叙述：详细的旅行故事\n"
-                           "   - 社交分享：适合发社交媒体的风格\n"
-                           "4. 为每个地点选择一张代表性照片\n"
+                           "   - 社交分享：适合发社交媒体的风格，包含适当的emoji\n"
+                           "4. 为每个地点选择一张代表性照片（使用照片索引）\n"
                            "5. 为每个地点提供大致的经纬度坐标\n"
-                           "请按照以下JSON格式返回结果：\n"
+                           "请严格按照以下JSON格式返回结果，确保字段名称完全一致，确保字段顺序完全一致：\n"
                            "{\"album_name\": \"相册名称\", \"album_description\": \"相册描述\", \"travel_path\": [{\"location\": \"地点名称\", \"description\": \"地点描述\", \"representative_photo_index\": 0, \"photos\": [0, 1], \"timestamp\": \"2025-12-20T10:00:00\", \"coordinates\": {\"lat\": 0.0, \"lng\": 0.0}, \"descriptions\": {\"minimal\": \"极简描述\", \"story\": \"故事描述\", \"social\": \"社交描述\"}}], \"selected_photos\": [0, 1], \"total_locations\": 1, \"total_photos\": 2}"
             },
             {
@@ -157,15 +162,17 @@ def analyze_with_multimodal_model(photo_data):
         
         # 构造请求体
         payload = {
-            "model": COZE_MODEL_NAME,
+            "model": DOUBAO_MODEL_NAME,
             "messages": messages,
+            "temperature": 0.7,
+            "max_tokens": 2000,
             "response_format": {
                 "type": "json_object"
             }
         }
         
         # 发送API请求
-        response = requests.post(COZE_API_ENDPOINT, headers=headers, json=payload)
+        response = requests.post(DOUBAO_API_ENDPOINT, headers=headers, json=payload)
         response.raise_for_status()  # 检查请求是否成功
         
         # 解析API响应
@@ -178,12 +185,12 @@ def analyze_with_multimodal_model(photo_data):
             analysis_result = json.loads(model_content)
             return analysis_result
         else:
-            raise Exception("Coze API返回格式错误")
+            raise Exception("豆包API返回格式错误")
             
     except requests.exceptions.RequestException as e:
-        raise Exception(f"Coze API请求失败: {str(e)}")
+        raise Exception(f"豆包API请求失败: {str(e)}")
     except json.JSONDecodeError as e:
-        raise Exception(f"Coze API响应解析失败: {str(e)}")
+        raise Exception(f"豆包API响应解析失败: {str(e)}")
     except Exception as e:
         raise Exception(f"照片分析失败: {str(e)}")
 
