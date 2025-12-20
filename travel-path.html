@@ -237,11 +237,11 @@
                 };
             });
             
-            // 创建照片组
-            createPhotoGroups(travelData, photosData);
-            
-            // 聚焦地图到路径
+            // 先聚焦地图到路径，确保mapX和mapY正确计算
             focusMapOnPath();
+            
+            // 然后创建照片组，使用正确的位置
+            createPhotoGroups(travelData, photosData);
             
             // 开始动画
             animate();
@@ -357,6 +357,8 @@
                 }
                 
                 // 绘制当前正在移动的路径段
+            if (currentPathIndex < pathPoints.length) {
+                // 如果还有路径段需要绘制
                 if (currentPathIndex < pathPoints.length - 1) {
                     const startPoint = pathPoints[currentPathIndex];
                     const endPoint = pathPoints[currentPathIndex + 1];
@@ -370,6 +372,18 @@
                     // 更新吉祥物位置
                     updateMascotPosition(currentX, currentY);
                 }
+                // 当到达最后一个路径点时，确保吉祥物显示在最后一个点
+                else if (currentPathIndex === pathPoints.length - 1) {
+                    const lastPoint = pathPoints[currentPathIndex];
+                    const currentX = mapX + lastPoint.x * mapScale;
+                    const currentY = mapY + lastPoint.y * mapScale;
+                    
+                    ctx.lineTo(currentX, currentY);
+                    
+                    // 更新吉祥物位置
+                    updateMascotPosition(currentX, currentY);
+                }
+            }
                 
                 ctx.stroke();
             }
@@ -409,7 +423,7 @@
             mascot.style.left = `${x - 30}px`;
             mascot.style.top = `${y - 30}px`;
             
-            // 检查是否到达照片组
+            // 检查是否到达当前路径点的照片组
             if (currentPathIndex < pathPoints.length) {
                 const targetPoint = pathPoints[currentPathIndex];
                 const targetX = mapX + targetPoint.x * mapScale;
@@ -418,6 +432,13 @@
                 const distance = Math.sqrt((x - targetX) ** 2 + (y - targetY) ** 2);
                 if (distance < 20 && !photoGroups[currentPathIndex].classList.contains('visible')) {
                     photoGroups[currentPathIndex].classList.add('visible');
+                }
+            }
+            // 当到达最后一个路径点后，确保最后一个照片组也显示出来
+            else if (currentPathIndex === pathPoints.length && pathPoints.length > 0) {
+                const lastIndex = pathPoints.length - 1;
+                if (!photoGroups[lastIndex].classList.contains('visible')) {
+                    photoGroups[lastIndex].classList.add('visible');
                 }
             }
         }
@@ -435,8 +456,16 @@
                 animationProgress = 0;
                 currentPathIndex++;
                 
-                if (currentPathIndex >= pathPoints.length) {
+                if (currentPathIndex > pathPoints.length) {
+                    // 当吉祥物完全经过最后一个路径点后，停止动画
                     animationComplete = true;
+                    // 确保最后一个照片组显示
+                    if (pathPoints.length > 0) {
+                        const lastIndex = pathPoints.length - 1;
+                        if (!photoGroups[lastIndex].classList.contains('visible')) {
+                            photoGroups[lastIndex].classList.add('visible');
+                        }
+                    }
                 }
             }
             
