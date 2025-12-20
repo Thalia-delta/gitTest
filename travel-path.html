@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅行路径</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .travel-path-container {
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 20px;
+        }
+        
+        .travel-path-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .travel-path-header h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .travel-path-header p {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .travel-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .travel-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            padding: 24px;
+            width: 350px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .travel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+        }
+        
+        .travel-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .travel-card h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .travel-card p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .photo-count {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .back-button {
+            display: inline-block;
+            margin: 40px auto;
+            padding: 12px 24px;
+            background: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .back-button:hover {
+            background: #f5f5f5;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="top-nav">
+        <div class="nav-toggle" id="navToggle">
+            <span class="toggle-icon">☰</span>
+        </div>
+        <div class="nav-dropdown" id="navDropdown">
+            <span class="nav-item" onclick="window.location.href='index.html'">主界面</span>
+            <span class="nav-item active">旅行路径</span>
+            <span class="nav-item" onclick="window.location.href='profile.html'">我的</span>
+        </div>
+    </header>
+
+    <div class="travel-path-container">
+        <div class="travel-path-header">
+            <h1>我的旅行路径</h1>
+            <p>基于照片分析的旅行足迹</p>
+        </div>
+
+        <div class="travel-cards" id="travelCards">
+            <!-- 旅行路径卡片将通过JavaScript动态生成 -->
+        </div>
+
+        <div style="text-align: center;">
+            <a href="index.html" class="back-button">返回主界面</a>
+        </div>
+    </div>
+
+    <script>
+        // 获取URL参数中的旅行数据
+        function getTravelDataFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const travelDataStr = urlParams.get('data');
+            return travelDataStr ? JSON.parse(decodeURIComponent(travelDataStr)) : null;
+        }
+
+        // 显示旅行路径卡片
+        function displayTravelCards(travelData) {
+            const container = document.getElementById('travelCards');
+            container.innerHTML = '';
+
+            travelData.travel_path.forEach((location, index) => {
+                const card = document.createElement('div');
+                card.className = 'travel-card';
+
+                // 这里需要替换为实际的代表照片
+                const photoData = location.representative_photo_data || 'https://via.placeholder.com/350x200';
+
+                card.innerHTML = `
+                    <img src="${photoData}" alt="${location.location}">
+                    <h2>${location.location}</h2>
+                    <p>${location.description}</p>
+                    <div class="photo-count">包含 ${location.photos.length} 张照片</div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            const travelData = getTravelDataFromURL();
+            if (travelData) {
+                displayTravelCards(travelData);
+            }
+        });
+
+        // 导航菜单功能（复用主界面的导航逻辑）
+        const navToggle = document.getElementById('navToggle');
+        const navDropdown = document.getElementById('navDropdown');
+        let isDropdownOpen = false;
+        
+        navToggle.addEventListener('click', () => {
+            isDropdownOpen = !isDropdownOpen;
+            navDropdown.classList.toggle('show', isDropdownOpen);
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!navToggle.contains(e.target) && !navDropdown.contains(e.target)) {
+                isDropdownOpen = false;
+                navDropdown.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

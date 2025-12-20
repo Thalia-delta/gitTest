@@ -1,0 +1,7 @@
+flask
+flask-cors
+pillow
+requests
+# 如果需要处理EXIF数据，可以添加：
+# piexif
+# exifread
