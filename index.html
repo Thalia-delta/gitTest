@@ -239,12 +239,15 @@
     let currentIndex = 0;
     let startX = 0;
     let currentX = 0;
-    const threshold = 60; // 减小阈值，使滑动更轻松
+    let startTime = 0;
+    const threshold = 100; // 进一步增加阈值，防止点击时误触发滑动
     const maxRotation = 10; // 最大倾斜角度
+    const minSwipeTime = 100; // 最小滑动时间（毫秒），区分点击和滑动
 
     // 触摸开始
     cardContainer.addEventListener('touchstart', (e) => {
       startX = e.touches[0].clientX;
+      startTime = Date.now();
       // 清除过渡效果，使拖动更流畅
       if (cards[currentIndex]) {
         cards[currentIndex].style.transition = 'none';
@@ -269,15 +272,16 @@
     // 触摸结束
     cardContainer.addEventListener('touchend', () => {
       const diffX = currentX - startX;
+      const swipeTime = Date.now() - startTime;
 
-      // 无论左右滑动，只要超过阈值就切换到下一张
-      if (Math.abs(diffX) > threshold) {
+      // 只有当滑动距离超过阈值且滑动时间足够长时才切换卡片
+      if (Math.abs(diffX) > threshold && swipeTime > minSwipeTime) { // 阈值和时间双重判断
         // 根据滑动方向设置旋转角度
         const rotation = diffX > 0 ? 15 : -15;
         const translateX = diffX > 0 ? 200 : -200;
         handleSwipe(translateX, rotation);
       }
-      // 没有滑动足够距离，重置位置
+      // 没有滑动足够距离或时间太短，重置位置
       else {
         resetCardPosition();
       }
@@ -352,6 +356,7 @@
     // 鼠标事件支持（用于桌面测试）
     cardContainer.addEventListener('mousedown', (e) => {
       startX = e.clientX;
+      startTime = Date.now();
       // 清除过渡效果
       if (cards[currentIndex]) {
         cards[currentIndex].style.transition = 'none';
@@ -373,9 +378,10 @@
 
     function mouseUpHandler(e) {
       const diffX = currentX - startX;
+      const swipeTime = Date.now() - startTime;
 
-      // 无论左右滑动，只要超过阈值就切换到下一张
-      if (Math.abs(diffX) > threshold) {
+      // 只有当滑动距离超过阈值且滑动时间足够长时才切换卡片
+      if (Math.abs(diffX) > threshold && swipeTime > minSwipeTime) {
         const rotation = diffX > 0 ? 15 : -15;
         const translateX = diffX > 0 ? 200 : -200;
         handleSwipe(translateX, rotation);
