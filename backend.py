@@ -34,31 +34,38 @@ def serve_static(path):
 # 模拟多模态大模型分析函数
 def analyze_with_multimodal_model(photo_data):
     # 这里是示例实现，实际需要调用真实的多模态大模型API
-    # 示例数据结构
+    # 修改后的数据结构，添加时间和坐标信息以支持地图显示
     result = {
-        "travel_path": [
-            {
-                "location": "北京",
-                "description": "中国的首都，拥有悠久的历史和丰富的文化遗产",
-                "representative_photo_index": 0,
-                "photos": [0, 1, 2]
-            },
-            {
-                "location": "上海",
-                "description": "中国的经济中心，现代化的国际大都市",
-                "representative_photo_index": 3,
-                "photos": [3, 4, 5]
-            },
-            {
-                "location": "杭州",
-                "description": "美丽的江南水乡，西湖风光闻名天下",
-                "representative_photo_index": 6,
-                "photos": [6, 7]
-            }
-        ],
-        "total_locations": 3,
-        "total_photos": len(photo_data)
-    }
+    "travel_path": [
+        {
+            "location": "北京",
+            "description": "中国的首都，拥有悠久的历史和丰富的文化遗产",
+            "representative_photo_index": 0,
+            "photos": [0, 1, 2],
+            "timestamp": "2025-12-15T10:00:00",  # 添加时间戳
+            "coordinates": {"lat": 39.9042, "lng": 116.4074}  # 添加经纬度坐标
+        },
+        {
+            "location": "上海",
+            "description": "中国的经济中心，现代化的国际大都市",
+            "representative_photo_index": 3,
+            "photos": [3, 4, 5],
+            "timestamp": "2025-12-16T14:30:00",  # 添加时间戳
+            "coordinates": {"lat": 31.2304, "lng": 121.4737}  # 添加经纬度坐标
+        },
+        {
+            "location": "杭州",
+            "description": "美丽的江南水乡，西湖风光闻名天下",
+            "representative_photo_index": 6,
+            "photos": [6, 7],
+            "timestamp": "2025-12-17T09:15:00",  # 添加时间戳
+            "coordinates": {"lat": 30.2741, "lng": 120.1551}  # 添加经纬度坐标
+        }
+            ],
+            "selected_photos": [0, 1, 2, 3, 4, 5, 6, 7],  # 添加筛选出的照片序号
+            "total_locations": 3,
+            "total_photos": len(photo_data)
+        }
     return result
 
 @app.route('/analyze-photos', methods=['POST'])

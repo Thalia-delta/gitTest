@@ -119,6 +119,9 @@
       const photoData = [];
       let processedCount = 0;
       
+      // 生成唯一标识符，用于存储照片数据
+      const photosKey = 'travel_photos_' + Date.now();
+      
       // 处理每张照片
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -127,6 +130,7 @@
         // 压缩照片以减小文件大小
         compressImage(file, (compressedData) => {
           const photo = {
+            id: i,
             name: file.name,
             size: file.size,
             compressedSize: compressedData.length,
@@ -143,7 +147,11 @@
           // 所有照片处理完成
           if (processedCount === files.length) {
             console.log('所有照片处理完成，开始发送请求...');
-            analyzePhotosWithAI(photoData);
+            // 生成唯一标识符，用于存储照片数据
+            const photosKey = 'travel_photos_' + Date.now();
+            // 将照片数据存储到localStorage
+            localStorage.setItem(photosKey, JSON.stringify(photoData));
+            analyzePhotosWithAI(photoData, photosKey);
           }
         });
       }
@@ -194,7 +202,7 @@
       reader.readAsDataURL(file);
     }
 
-    function analyzePhotosWithAI(photoData) {
+    function analyzePhotosWithAI(photoData, photosKey) {
       // 发送照片数据到后端进行AI分析
       console.log('开始发送请求到后端...');
       console.log('请求数据长度:', photoData.length);
@@ -216,13 +224,15 @@
       })
       .then(result => {
         console.log('AI分析结果:', result);
-        // 显示旅行路径卡片
-        showTravelPath(result);
+        // 显示旅行路径卡片，传递photosKey
+        showTravelPath(result, photosKey);
       })
       .catch(error => {
         console.error('AI分析失败:', error);
         console.error('错误详情:', error.message);
         alert('照片分析失败，请重试。错误信息: ' + error.message);
+        // 如果分析失败，移除已存储的照片数据
+        localStorage.removeItem(photosKey);
       });
     }
 
@@ -393,10 +403,10 @@
       cardContainer.removeEventListener('mouseup', mouseUpHandler);
     }
 
-    function showTravelPath(travelData) {
-      // 将AI分析结果传递到旅行路径页面
+    function showTravelPath(travelData, photosKey) {
+      // 将AI分析结果和照片存储键传递到旅行路径页面
       const travelDataStr = encodeURIComponent(JSON.stringify(travelData.data));
-      window.location.href = `travel-path.html?data=${travelDataStr}`;
+      window.location.href = `travel-path.html?data=${travelDataStr}&photosKey=${photosKey}`;
     }
   </script>
 </body>

@@ -6,92 +6,151 @@
     <title>旅行路径</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        /* 地图背景容器 */
+        #mapCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0.8;
+            z-index: -1;
+            transition: transform 2s ease;
+        }
+        
+        /* 主容器 */
         .travel-path-container {
-            max-width: 1200px;
-            margin: 80px auto 0;
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
         
+        /* 顶部导航 */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        /* 旅行路径标题 */
         .travel-path-header {
             text-align: center;
             margin-bottom: 40px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .travel-path-header h1 {
-            font-size: 28px;
-            color: #333;
+            font-size: 36px;
             margin-bottom: 10px;
         }
         
         .travel-path-header p {
-            font-size: 16px;
-            color: #666;
+            font-size: 18px;
+            opacity: 0.9;
         }
         
-        .travel-cards {
+        /* 吉祥物 */
+        .mascot {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-image: url('Picture/羽绒服.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        
+        /* 照片组 */
+        .photo-group {
+            position: absolute;
+            width: 120px;
+            height: 160px;
             display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            z-index: 50;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
         }
         
-        .travel-card {
+        .photo-group.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .photo-card {
+            width: 100px;
+            height: 100px;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            padding: 24px;
-            width: 350px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .travel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
-        }
-        
-        .travel-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .travel-card h2 {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 8px;
-        }
-        
-        .travel-card p {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-        
-        .photo-count {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: 12px;
-            color: #999;
+            color: #666;
         }
         
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .photo-info {
+            background: rgba(255,255,255,0.9);
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* 返回按钮 */
         .back-button {
-            display: inline-block;
-            margin: 40px auto;
+            position: fixed;
+            bottom: 30px;
             padding: 12px 24px;
-            background: #fff;
+            background: rgba(255,255,255,0.9);
             color: #333;
-            border: 1px solid #ddd;
+            border: none;
             border-radius: 25px;
             text-decoration: none;
             font-size: 16px;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
         }
         
         .back-button:hover {
-            background: #f5f5f5;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: white;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
             transform: translateY(-2px);
         }
     </style>
@@ -109,57 +168,288 @@
         </div>
     </header>
 
+    <!-- 地图背景 -->
+    <canvas id="mapCanvas"></canvas>
+    
+    <!-- 吉祥物 -->
+    <div class="mascot" id="mascot"></div>
+    
+    <!-- 旅行路径容器 -->
     <div class="travel-path-container">
         <div class="travel-path-header">
             <h1>我的旅行路径</h1>
             <p>基于照片分析的旅行足迹</p>
         </div>
-
-        <div class="travel-cards" id="travelCards">
-            <!-- 旅行路径卡片将通过JavaScript动态生成 -->
-        </div>
-
-        <div style="text-align: center;">
-            <a href="index.html" class="back-button">返回主界面</a>
-        </div>
     </div>
+    
+    <!-- 返回按钮 -->
+    <a href="index.html" class="back-button">返回主界面</a>
 
     <script>
-        // 获取URL参数中的旅行数据
+        // 获取URL参数中的旅行数据和照片键
         function getTravelDataFromURL() {
             const urlParams = new URLSearchParams(window.location.search);
             const travelDataStr = urlParams.get('data');
-            return travelDataStr ? JSON.parse(decodeURIComponent(travelDataStr)) : null;
+            const photosKey = urlParams.get('photosKey');
+            
+            return {
+                travelData: travelDataStr ? JSON.parse(decodeURIComponent(travelDataStr)) : null,
+                photosKey: photosKey
+            };
         }
-
-        // 显示旅行路径卡片
-        function displayTravelCards(travelData) {
-            const container = document.getElementById('travelCards');
-            container.innerHTML = '';
-
-            travelData.travel_path.forEach((location, index) => {
-                const card = document.createElement('div');
-                card.className = 'travel-card';
-
-                // 这里需要替换为实际的代表照片
-                const photoData = location.representative_photo_data || 'https://via.placeholder.com/350x200';
-
-                card.innerHTML = `
-                    <img src="${photoData}" alt="${location.location}">
-                    <h2>${location.location}</h2>
-                    <p>${location.description}</p>
-                    <div class="photo-count">包含 ${location.photos.length} 张照片</div>
+        
+        // 从localStorage获取照片数据
+        function getPhotosFromLocalStorage(photosKey) {
+            if (!photosKey) return null;
+            const photosDataStr = localStorage.getItem(photosKey);
+            return photosDataStr ? JSON.parse(photosDataStr) : null;
+        }
+        
+        // 地图和动画相关变量
+        let canvas, ctx;
+        let mapScale = 1;
+        let mapX = 0, mapY = 0;
+        let pathPoints = [];
+        let currentPathIndex = 0;
+        let mascotPosition = { x: 0, y: 0 };
+        let animationProgress = 0;
+        let animationComplete = false;
+        let photoGroups = [];
+        
+        // 初始化地图
+        function initMap(travelData, photosKey) {
+            canvas = document.getElementById('mapCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // 设置canvas尺寸
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // 从localStorage获取照片数据
+            const photosData = getPhotosFromLocalStorage(photosKey);
+            
+            // 转换经纬度到canvas坐标
+            pathPoints = travelData.travel_path.map(location => {
+                return {
+                    x: (location.coordinates.lng + 180) * (canvas.width / 360),
+                    y: (90 - location.coordinates.lat) * (canvas.height / 180),
+                    location: location
+                };
+            });
+            
+            // 创建照片组
+            createPhotoGroups(travelData, photosData);
+            
+            // 聚焦地图到路径
+            focusMapOnPath();
+            
+            // 开始动画
+            animate();
+        }
+        
+        // 调整canvas尺寸
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        // 聚焦地图到路径
+        function focusMapOnPath() {
+            // 计算路径的边界
+            let minX = Math.min(...pathPoints.map(p => p.x));
+            let maxX = Math.max(...pathPoints.map(p => p.x));
+            let minY = Math.min(...pathPoints.map(p => p.y));
+            let maxY = Math.max(...pathPoints.map(p => p.y));
+            
+            // 计算中心点
+            const centerX = (minX + maxX) / 2;
+            const centerY = (minY + maxY) / 2;
+            
+            // 计算缩放比例
+            const padding = 100;
+            const scaleX = (canvas.width - 2 * padding) / (maxX - minX);
+            const scaleY = (canvas.height - 2 * padding) / (maxY - minY);
+            mapScale = Math.min(scaleX, scaleY) * 0.8;
+            
+            // 计算偏移量
+            mapX = canvas.width / 2 - centerX * mapScale;
+            mapY = canvas.height / 2 - centerY * mapScale;
+            
+            // 应用过渡效果
+            setTimeout(() => {
+                canvas.style.transform = `scale(1.2)`;
+            }, 100);
+        }
+        
+        // 创建照片组
+        function createPhotoGroups(travelData, photosData) {
+            pathPoints.forEach((point, index) => {
+                const photoGroup = document.createElement('div');
+                photoGroup.className = 'photo-group';
+                
+                // 获取代表照片
+                const representativePhotoIndex = point.location.representative_photo_index;
+                let photoSrc = 'https://via.placeholder.com/100x100';
+                
+                // 如果有照片数据，使用实际照片
+                if (photosData && representativePhotoIndex < photosData.length) {
+                    photoSrc = photosData[representativePhotoIndex].data;
+                }
+                
+                photoGroup.innerHTML = `
+                    <div class="photo-card">
+                        <img src="${photoSrc}" alt="${point.location.location}">
+                    </div>
+                    <div class="photo-info">${point.location.location}</div>
                 `;
-
-                container.appendChild(card);
+                
+                // 设置位置
+                const screenX = mapX + point.x * mapScale;
+                const screenY = mapY + point.y * mapScale;
+                photoGroup.style.left = `${screenX - 60}px`;
+                photoGroup.style.top = `${screenY - 100}px`;
+                
+                document.body.appendChild(photoGroup);
+                photoGroups.push(photoGroup);
             });
         }
-
+        
+        // 绘制地图
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制半透明背景
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.6)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制网格
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 1;
+            
+            const gridSize = 50;
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // 绘制路径
+            if (pathPoints.length > 1) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                ctx.beginPath();
+                ctx.moveTo(mapX + pathPoints[0].x * mapScale, mapY + pathPoints[0].y * mapScale);
+                
+                const drawUpToIndex = Math.min(currentPathIndex + 1, pathPoints.length);
+                for (let i = 1; i < drawUpToIndex; i++) {
+                    ctx.lineTo(mapX + pathPoints[i].x * mapScale, mapY + pathPoints[i].y * mapScale);
+                }
+                
+                // 绘制当前正在移动的路径段
+                if (currentPathIndex < pathPoints.length - 1) {
+                    const startPoint = pathPoints[currentPathIndex];
+                    const endPoint = pathPoints[currentPathIndex + 1];
+                    const progress = animationProgress;
+                    
+                    const currentX = mapX + (startPoint.x + (endPoint.x - startPoint.x) * progress) * mapScale;
+                    const currentY = mapY + (startPoint.y + (endPoint.y - startPoint.y) * progress) * mapScale;
+                    
+                    ctx.lineTo(currentX, currentY);
+                    
+                    // 更新吉祥物位置
+                    updateMascotPosition(currentX, currentY);
+                }
+                
+                ctx.stroke();
+            }
+            
+            // 绘制路径点
+            pathPoints.forEach((point, index) => {
+                const x = mapX + point.x * mapScale;
+                const y = mapY + point.y * mapScale;
+                
+                // 已访问的点
+                if (index < currentPathIndex) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                // 当前点
+                else if (index === currentPathIndex) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                // 未访问的点
+                else {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+        }
+        
+        // 更新吉祥物位置
+        function updateMascotPosition(x, y) {
+            const mascot = document.getElementById('mascot');
+            mascot.style.left = `${x - 30}px`;
+            mascot.style.top = `${y - 30}px`;
+            
+            // 检查是否到达照片组
+            if (currentPathIndex < pathPoints.length) {
+                const targetPoint = pathPoints[currentPathIndex];
+                const targetX = mapX + targetPoint.x * mapScale;
+                const targetY = mapY + targetPoint.y * mapScale;
+                
+                const distance = Math.sqrt((x - targetX) ** 2 + (y - targetY) ** 2);
+                if (distance < 20 && !photoGroups[currentPathIndex].classList.contains('visible')) {
+                    photoGroups[currentPathIndex].classList.add('visible');
+                }
+            }
+        }
+        
+        // 动画循环
+        function animate() {
+            if (animationComplete) return;
+            
+            drawMap();
+            
+            // 更新动画进度
+            animationProgress += 0.005;
+            
+            if (animationProgress >= 1) {
+                animationProgress = 0;
+                currentPathIndex++;
+                
+                if (currentPathIndex >= pathPoints.length) {
+                    animationComplete = true;
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
         // 初始化页面
         document.addEventListener('DOMContentLoaded', () => {
-            const travelData = getTravelDataFromURL();
+            const { travelData, photosKey } = getTravelDataFromURL();
+            
             if (travelData) {
-                displayTravelCards(travelData);
+                const photosData = getPhotosFromLocalStorage(photosKey);
+                initMap(travelData, photosKey);
             }
         });
 
