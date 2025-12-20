@@ -473,11 +473,80 @@
             };
         }
         
-        // 从localStorage获取照片数据
-        function getPhotosFromLocalStorage(photosKey) {
-            if (!photosKey) return null;
-            const photosDataStr = localStorage.getItem(photosKey);
-            return photosDataStr ? JSON.parse(photosDataStr) : null;
+        // IndexedDB 相关函数
+        const DB_NAME = 'TravelPhotosDB';
+        const DB_VERSION = 3;
+        const STORE_NAME = 'photos';
+        
+        // 打开 IndexedDB 数据库
+        function openDB() {
+          return new Promise((resolve, reject) => {
+            // 检查indexedDB对象是否可用
+            if (!window.indexedDB) {
+              reject('您的浏览器不支持IndexedDB');
+              return;
+            }
+            
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            
+            request.onupgradeneeded = (event) => {
+              const db = event.target.result;
+              let store;
+              if (!db.objectStoreNames.contains(STORE_NAME)) {
+                store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+              } else {
+                store = event.target.transaction.objectStore(STORE_NAME);
+              }
+              // 创建索引以便按photosKey查询
+              if (!store.indexNames.contains('by_photosKey')) {
+                store.createIndex('by_photosKey', 'photosKey');
+              }
+            };
+            
+            request.onsuccess = (event) => {
+              resolve(event.target.result);
+            };
+            
+            request.onerror = (event) => {
+              const error = event.target.error || { name: '未知错误' };
+              reject('打开数据库失败: ' + error.name);
+            };
+          });
+        }
+        
+        // 从IndexedDB获取照片数据
+        async function getPhotosFromIndexedDB(photosKey) {
+          try {
+            const db = await openDB();
+            const transaction = db.transaction(STORE_NAME, 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            let request;
+            
+            // 根据photosKey查询特定相册的照片
+            if (photosKey) {
+              const index = store.index('by_photosKey');
+              request = index.getAll(photosKey);
+            } else {
+              // 如果没有photosKey，获取所有照片
+              request = store.getAll();
+            }
+            
+            return new Promise((resolve, reject) => {
+              request.onsuccess = (event) => {
+                const photos = event.target.result;
+                // 按id排序照片，确保索引与上传时一致
+                photos.sort((a, b) => a.id - b.id);
+                resolve(photos);
+              };
+              
+              request.onerror = (error) => {
+                reject('获取照片数据失败: ' + error);
+              };
+            });
+          } catch (error) {
+            console.error('从IndexedDB获取照片数据失败:', error);
+            return null;
+          }
         }
         
         // 地图和动画相关变量
@@ -493,7 +562,7 @@
         let photoGroups = [];
         
         // 初始化地图
-        function initMap(travelData, photosKey) {
+        async function initMap(travelData, photosKey) {
             canvas = document.getElementById('mapCanvas');
             ctx = canvas.getContext('2d');
             
@@ -509,8 +578,8 @@
                 document.getElementById('albumDescription').textContent = travelData.album_description;
             }
             
-            // 从localStorage获取照片数据
-            const photosData = getPhotosFromLocalStorage(photosKey);
+            // 从IndexedDB获取照片数据
+            const photosData = await getPhotosFromIndexedDB(photosKey);
             
             // 转换经纬度到canvas坐标
             pathPoints = travelData.travel_path.map(location => {
@@ -993,7 +1062,6 @@
             const { travelData, photosKey } = getTravelDataFromURL();
             
             if (travelData) {
-                const photosData = getPhotosFromLocalStorage(photosKey);
                 initMap(travelData, photosKey);
             }
             
