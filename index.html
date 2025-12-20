@@ -24,7 +24,7 @@
   <main class="main">
     <!-- 吉祥物 -->
     <div class="mascot">
-      <img src="Picture\羽绒服.png" alt="mascot">
+      <img src="Picture\草裙.png" alt="mascot">
     </div>
 
     <!-- 文案 -->
@@ -147,9 +147,7 @@
           // 所有照片处理完成
           if (processedCount === files.length) {
             console.log('所有照片处理完成，开始发送请求...');
-            // 生成唯一标识符，用于存储照片数据
-            const photosKey = 'travel_photos_' + Date.now();
-            // 将照片数据存储到localStorage
+            // 将照片数据存储到localStorage (使用之前生成的photosKey)
             localStorage.setItem(photosKey, JSON.stringify(photoData));
             analyzePhotosWithAI(photoData, photosKey);
           }
@@ -236,13 +234,6 @@
       });
     }
 
-    function showTravelPath(travelData) {
-      // 创建新页面或弹窗显示旅行路径卡片
-      // 这里简化处理，实际需要创建新的HTML结构
-      console.log('旅行路径数据:', travelData);
-      alert('照片分析完成，旅行路径已生成');
-    }
-    
     // 卡片滑动功能
     const cardContainer = document.querySelector('.card-container');
     const cards = Array.from(document.querySelectorAll('.card'));
